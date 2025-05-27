@@ -60,6 +60,7 @@ class HandDetector:
         allHands = []
         h, w, c = img.shape
         if self.results.multi_hand_landmarks:
+            num_players = len(self.results.multi_handedness)
             for handId, (handType, handLms) in enumerate(zip(self.results.multi_handedness, self.results.multi_hand_landmarks)):
                 myHand = {}
                 ## lmList
@@ -102,7 +103,7 @@ class HandDetector:
                                   (255, 0, 255), 2)
                     cv2.putText(img, myHand["type"], (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,
                                 2, (255, 0, 255), 2)
-                    cv2.putText(img, f"Player {handId}", (bbox[0] - 60, bbox[1] - 60), cv2.FONT_HERSHEY_PLAIN,
+                    cv2.putText(img, f"Player {num_players - handId}", (bbox[0] - 60, bbox[1] - 60), cv2.FONT_HERSHEY_PLAIN,
                                 2, (255, 0, 255), 2)
 
         return allHands, img
