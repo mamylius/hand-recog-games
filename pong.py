@@ -13,7 +13,7 @@ BALL_SPEED   = 2.0
 BALL_RADIUS  = 10
 
 PADDLE_ARC_FRACTION = 0.25
-PADDLE_SPEED_FACTOR = 0.03
+PADDLE_SPEED_FACTOR = 0.02
 SPIN_FACTOR         = 0.1
 
 NUM_ROUNDS    = 10          # total rounds before podium
@@ -158,8 +158,8 @@ def resolve_paddle_hit(ball,rel,paddle):
 
 def show_podium(screen,scores,pads):
     """Display the final ranking on a three‑step podium. Returns when the
-    user presses <Enter> or closes the window."""
-    pygame.display.set_caption("Results – press <Enter> to continue")
+    user presses <Space> or closes the window."""
+    pygame.display.set_caption("Results – press <Space> to continue")
     ranking=sorted(range(len(scores)),key=lambda i:(-scores[i],i))  # by score then player index
     topN=min(3,len(ranking))
     big_font = pygame.font.SysFont(None,64)
@@ -273,7 +273,7 @@ def menu():
             if e.type==pygame.KEYDOWN:
                 if e.key in (pygame.K_LEFT,pygame.K_a,pygame.K_DOWN): sel=6 if sel==2 else sel-1
                 if e.key in (pygame.K_RIGHT,pygame.K_d,pygame.K_UP): sel=2 if sel==6 else sel+1
-                if e.key==pygame.K_RETURN: return sel
+                if e.key==pygame.K_SPACE: return sel
         screen.fill((0,0,0))
         screen.blit(font.render("Multi-Side Pong",True,(255,255,255)),(SCREEN_SIZE//2-140,150))
         screen.blit(font.render(f"Players: {sel}",True,PLAYER_COLORS[sel-1]),(SCREEN_SIZE//2-90,350))

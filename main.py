@@ -3,26 +3,57 @@ from HandTrackingModule import HandDetector
 from directkeys import PressKey, ReleaseKey
 from directkeys import SPACE_KEY as space_pressed
 import time
+import pynput
+
+keyboard = pynput.keyboard.Controller()
+PressKey = keyboard.press
+ReleaseKey = keyboard.release
+#pyautogui.PAUSE = 0
 
 detector=HandDetector(detectionCon=0.7, maxHands=6)
 
 space_key_pressed=space_pressed
 
+print(pynput.keyboard.KeyCode.from_char("a"))
+
 # actions = {'left': 18, 'half_left': 12, 'right': 0, 'half_right': 6}
+# ACTIONS = [
+#     (18, 12,  0,  6),   # P1  – 1, q, a, y full_up/right, up/half_right, down/half_left, down/left
+#     (19, 13,  1,  7),   # P2  – 2, w, s, x
+#     (20, 14,  2,  8),   # P3  – 3, e, d, c
+#     (21, 15,  3,  9),   # P4  – 4, r, f, v
+#     (23, 17,  5, 11),   # P5  – 5, t, g, b
+#     (22, 16,  4, 45)    # P6  – 6, z, h, n
+# ] # For mac
+
+# ACTIONS = [
+#     (0x31, 0x51,  0x41, 0x59),   # P1  – 1, q, a, y full_up/right, up/half_right, down/half_left, down/left
+#     (0x32, 0x57,  0x53, 0x58),   # P2  – 2, w, s, x
+#     (0x33, 0x45,  0x44, 0x43),   # P3  – 3, e, d, c
+#     (0x34, 0x52,  0x46, 0x56),   # P4  – 4, r, f, v
+#     (0x35, 0x54,  0x47, 0x42),   # P5  – 5, t, g, b
+#     (0x36, 0x5A,  0x48, 0x4E)    # P6  – 6, z, h, n
+# ]
+
 ACTIONS = [
-    (18, 12,  0,  6),   # P1  – 1, q, a, y full_up/right, up/half_right, down/half_left, down/left
-    (19, 13,  1,  7),   # P2  – 2, w, s, x
-    (20, 14,  2,  8),   # P3  – 3, e, d, c
-    (21, 15,  3,  9),   # P4  – 4, r, f, v
-    (23, 17,  5, 11),   # P5  – 5, t, g, b
-    (22, 16,  4, 45)    # P6  – 6, z, h, n
+    ('1', 'q',  'a', 'z'),   # P1  – 1, q, a, y full_up/right, up/half_right, down/half_left, down/left
+    ('2', 'w',  's', 'x'),   # P2  – 2, w, s, x
+    ('3', 'e',  'd', 'c'),   # P3  – 3, e, d, c
+    ('4', 'r',  'f', 'v'),   # P4  – 4, r, f, v
+    ('5', 't',  'g', 'b'),   # P5  – 5, t, g, b
+    ('6', 'y',  'h', 'n')    # P6  – 6, z, h, n
 ]
+
 
 time.sleep(2.0)
 
 current_key_pressed = set()
 
 video=cv2.VideoCapture(0)
+video.set(3, 640)
+video.set(4, 480)
+
+prev_key_pressed = set()
 
 while True:
     start = time.time()
@@ -32,16 +63,18 @@ while True:
     key_count=0
     key_pressed=0   
     hands,img=detector.findHands(frame)
-    cv2.rectangle(img, (0, 480), (300, 425),(50, 50, 255), -2)
-    cv2.rectangle(img, (640, 480), (400, 425),(50, 50, 255), -2)
+    # cv2.rectangle(img, (0, 480), (300, 425),(50, 50, 255), -2)
+    # cv2.rectangle(img, (640, 480), (400, 425),(50, 50, 255), -2)
     cv2.rectangle(img, (0, 580), (400, 525),(50, 50, 255), -2) 
     if hands:
-        for key in current_key_pressed:
-            ReleaseKey(key)
+        #for key in current_key_pressed:
+        #    ReleaseKey(key)
             
         current_key_pressed = set()
+        hands.reverse()
 
         for i, hand in enumerate(hands):
+            print(f"PLAYER:{i}")
             lm=hand
             fingerUp=detector.fingersUp(lm)
             thumbAngle=detector.thumbAngle(lm)
@@ -69,9 +102,14 @@ while True:
         if thumbAngle:
             cv2.putText(frame, f'ThumbAngle: {thumbAngle:.1f}', (20,560), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
-        for key in current_key_pressed:
-            PressKey(key)
+        for key in current_key_pressed - prev_key_pressed:
+                PressKey(key)
 
+        for key in prev_key_pressed - current_key_pressed:
+                ReleaseKey(key)
+    
+
+        prev_key_pressed = current_key_pressed.copy()
 
 
     cv2.imshow("Frame",frame)
