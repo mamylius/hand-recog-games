@@ -4,6 +4,7 @@ from directkeys_mac import PressKey, ReleaseKey
 from directkeys_mac import SPACE_KEY as space_pressed
 import time
 import pynput
+import numpy as np
 
 keyboard = pynput.keyboard.Controller()
 PressKey = keyboard.press
@@ -45,9 +46,6 @@ ACTIONS = [
 ]
 FRAME_DIM = (640, 480)
 
-
-time.sleep(2.0)
-
 current_key_pressed = set()
 
 video=cv2.VideoCapture(0)
@@ -59,15 +57,15 @@ prev_key_pressed = set()
 while True:
     start = time.time()
     ret,frame=video.read()
-    print(type(frame), frame.shape)
     # Split the frame into two halves
     frames = [frame[:, :FRAME_DIM[0]//2], frame[:, FRAME_DIM[0]//2:]]
-    for i, frame in enumerate(frames):
+    for half, frame in enumerate(frames):
+        print(half)
         keyPressed = False
         spacePressed = False
         key_count=0
         key_pressed=0   
-        hands,img=detector.findHands(frame, onlyRight=True)
+        hands,img=detector.findHands(frame, onlyRight=False)
         # cv2.rectangle(img, (0, 480), (300, 425),(50, 50, 255), -2)
         # cv2.rectangle(img, (640, 480), (400, 425),(50, 50, 255), -2)
         cv2.rectangle(img, (0, 580), (400, 525),(50, 50, 255), -2) 
@@ -78,31 +76,31 @@ while True:
             current_key_pressed = set()
             hands.reverse()
 
-            for i, hand in enumerate(hands):
-                print(f"PLAYER:{i}")
-                lm=hand
-                fingerUp=detector.fingersUp(lm)
-                thumbAngle=detector.thumbAngle(lm)
-                print(thumbAngle)      
-                if 30<thumbAngle and thumbAngle<60: 
-                    # Add a key press for the event the key is 1 on the keyboard    
-                    # PressKey(ACTIONS[i][1])
-                    current_key_pressed.add(ACTIONS[i][1])
-                    print("half_right")
-                elif 60<thumbAngle:
-                    # PressKey(ACTIONS[i][0])
-                    current_key_pressed.add(ACTIONS[i][0])
-                    print("right")
-                elif -60<thumbAngle and thumbAngle<-30:
-                    # PressKey(ACTIONS[i][2])
-                    current_key_pressed.add(ACTIONS[i][2])
-                    print("half_left")
-                elif thumbAngle<-60:
-                    # PressKey(ACTIONS[i][3])
-                    current_key_pressed.add(ACTIONS[i][3])
-                    print("left")
-                else:
-                    pass
+            hand = hands[0] # Only process the first hand for each frame
+            print(f"PLAYER:{half}")
+            lm=hand
+            fingerUp=detector.fingersUp(lm)
+            thumbAngle=detector.thumbAngle(lm)
+            print(thumbAngle)      
+            if 30<thumbAngle and thumbAngle<60: 
+                # Add a key press for the event the key is 1 on the keyboard    
+                # PressKey(ACTIONS[i][1])
+                current_key_pressed.add(ACTIONS[half][1])
+                print("half_right")
+            elif 60<thumbAngle:
+                # PressKey(ACTIONS[i][0])
+                current_key_pressed.add(ACTIONS[half][0])
+                print("right")
+            elif -60<thumbAngle and thumbAngle<-30:
+                # PressKey(ACTIONS[i][2])
+                current_key_pressed.add(ACTIONS[half][2])
+                print("half_left")
+            elif thumbAngle<-60:
+                # PressKey(ACTIONS[i][3])
+                current_key_pressed.add(ACTIONS[half][3])
+                print("left")
+            else:
+                pass
 
             if thumbAngle:
                 cv2.putText(frame, f'ThumbAngle: {thumbAngle:.1f}', (20,560), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
@@ -115,14 +113,15 @@ while True:
         
 
             prev_key_pressed = current_key_pressed.copy()
+            frames[half] = frame
 
-
-        cv2.imshow("Frame",frame)
-        k=cv2.waitKey(1)
-        if k==ord('q'):
-            break
-        end = time.time()
-        print(f"Frame processing time: {end - start:.4f} seconds")
+    frame = np.concatenate((frames[0], frames[1]), axis=1)
+    cv2.imshow("Frame",frame)
+    k=cv2.waitKey(1)
+    if k==ord('q'):
+        break
+    end = time.time()
+    print(f"Frame processing time: {end - start:.4f} seconds")
         # time.sleep(1 - (end - start))  # Adjust the sleep time as needed
 
 
