@@ -4,7 +4,7 @@
 
 [x] Making one script with args for pong using different video streams.
 
-[] Majority Voting Dino.
+[x] Majority Voting Dino.
 
 [] Test on Windows.
 
