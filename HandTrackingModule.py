@@ -108,7 +108,7 @@ class HandDetector:
                                   self.PLAYER_COLORS[player_id], 2)
                     cv2.putText(img, myHand["type"], (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,
                                 2, self.PLAYER_COLORS[player_id], 2)
-                    cv2.putText(img, f"Player {num_players - handId}", (bbox[0] - 60, bbox[1] - 60), cv2.FONT_HERSHEY_PLAIN,
+                    cv2.putText(img, f"Player {player_id + 1}", (bbox[0] - 60, bbox[1] - 60), cv2.FONT_HERSHEY_PLAIN,
                                 2, self.PLAYER_COLORS[player_id], 2)
 
         return allHands, img
