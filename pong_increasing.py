@@ -137,11 +137,18 @@ class Ball:
         self.reset()
 
     def reset(self):
-        self.pos   = pygame.math.Vector2(SCREEN_SIZE//2, SCREEN_SIZE//2)
-        ang        = random.uniform(0, 2*math.pi)
-        # start at base speed
+        self.pos  = pygame.math.Vector2(SCREEN_SIZE//2, SCREEN_SIZE//2)
+        # --- new: avoid horizontal spawns ±20° ---
+        min_deg = 20
+        min_rad = math.radians(min_deg)
+        # sample until the angle is more than 20° away from 0° or 180°
+        ang = random.uniform(0, 2*math.pi)
+        # abs(cos(ang)) is 1 at 0/180°, and drops as you move away
+        while abs(math.cos(ang)) > math.cos(min_rad):
+            ang = random.uniform(0, 2*math.pi)
         self.speed = BALL_SPEED
-        self.vel   = pygame.math.Vector2(math.cos(ang), math.sin(ang)) * self.speed
+        self.vel  = pygame.math.Vector2(math.cos(ang), math.sin(ang)) * self.speed
+
 
     def update(self):
         # gradually increase speed

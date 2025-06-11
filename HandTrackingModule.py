@@ -45,7 +45,7 @@ class HandDetector:
         self.lmList = []
         self.PLAYER_COLORS=[(255,64,64),(64,255,64),(64,128,255),(255,255,64),(255,64,255),(64,255,255)]
 
-    def findHands(self, img, draw=True, flipType=True, onlyRight=False):
+    def findHands(self, img, draw=True, flipType=True, onlyRight=False, playerid=None):
         """
         Finds hands in a BGR image.
         :param img: Image to find the hands in.
@@ -97,17 +97,19 @@ class HandDetector:
                     myHand["type"] = handType.classification[0].label
                 allHands.append(myHand)
 
+                player_id = playerid if playerid else num_players - handId - 1 
+
                 ## draw
                 if draw:
                     self.mpDraw.draw_landmarks(img, handLms,
                                                self.mpHands.HAND_CONNECTIONS)
                     cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20),
                                   (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20),
-                                  self.PLAYER_COLORS[num_players - handId - 1], 2)
+                                  self.PLAYER_COLORS[player_id], 2)
                     cv2.putText(img, myHand["type"], (bbox[0] - 30, bbox[1] - 30), cv2.FONT_HERSHEY_PLAIN,
-                                2, self.PLAYER_COLORS[num_players - handId - 1], 2)
+                                2, self.PLAYER_COLORS[player_id], 2)
                     cv2.putText(img, f"Player {num_players - handId}", (bbox[0] - 60, bbox[1] - 60), cv2.FONT_HERSHEY_PLAIN,
-                                2, self.PLAYER_COLORS[num_players - handId - 1], 2)
+                                2, self.PLAYER_COLORS[player_id], 2)
 
         return allHands, img
 
