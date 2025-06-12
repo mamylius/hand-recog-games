@@ -1,8 +1,8 @@
 import argparse
 import cv2
 from HandTrackingModule import HandDetector
-from directkeys_mac import PressKey, ReleaseKey
-from directkeys_mac import SPACE_KEY as space_pressed
+from directkeys_win import PressKey, ReleaseKey
+from directkeys_win import SPACE_KEY as space_pressed
 import time
 import pynput
 import numpy as np
@@ -97,7 +97,7 @@ while True:
 
         prev_key_pressed = current_key_pressed.copy()
 
-    cv2.imshow("Frame", frame)
+    cv2.imshow(f"Frame-{playerid}", frame)
     k = cv2.waitKey(1)
     if k == ord('q'):
         break

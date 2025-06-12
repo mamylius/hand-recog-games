@@ -1,7 +1,7 @@
 import cv2
 from HandTrackingModule import HandDetector
-from directkeys_mac import PressKey, ReleaseKey
-from directkeys_mac import SPACE_KEY as space_pressed
+from directkeys_win import PressKey, ReleaseKey
+from directkeys_win import SPACE_KEY as space_pressed
 import time
 
 detector = HandDetector(detectionCon=0.7, maxHands=6)
