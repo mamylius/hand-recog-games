@@ -1,7 +1,7 @@
 import cv2
 from HandTrackingModule import HandDetector
-from directkeys_win import PressKey, ReleaseKey
-from directkeys_win import SPACE_KEY as space_pressed
+from directkeys_linux import PressKey, ReleaseKey
+from directkeys_linux import SPACE_KEY as space_pressed
 import time
 
 detector = HandDetector(detectionCon=0.7, maxHands=6)
@@ -11,7 +11,10 @@ time.sleep(2.0)
 
 current_key_pressed = set()
 
+FRAME_DIM = (1280, 720)
 video = cv2.VideoCapture(0)
+video.set(3, FRAME_DIM[0])
+video.set(4, FRAME_DIM[1])
 
 while True:
     ret, frame = video.read()
