@@ -34,9 +34,16 @@ FRAME_DIM = (1280, 720)
 current_key_pressed = set()
 
 # ---- Initialize Video ---- #
-video = cv2.VideoCapture(args.device)
+# Explicitly specify the backend when opening the camera.  On some
+# systems OpenCV's default backend fails to initialise a second camera
+# when multiple devices are connected.  CAP_DSHOW is broadly supported
+# on Windows and prevents errors like "can't open camera by index".
+video = cv2.VideoCapture(args.device, cv2.CAP_DSHOW)
 video.set(3, FRAME_DIM[0])
 video.set(4, FRAME_DIM[1])
+
+if not video.isOpened():
+    raise RuntimeError(f"Failed to open video device {args.device}")
 
 prev_key_pressed = set()
 
