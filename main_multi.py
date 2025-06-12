@@ -9,7 +9,7 @@ import numpy as np
 
 # ---- Argument Parsing ---- #
 parser = argparse.ArgumentParser(description="Hand gesture control script.")
-parser.add_argument('--device', type=int, default=0, choices=[0,1,2], help='Video capture device ID (0, 1, 2)')
+parser.add_argument('--device', type=str, default=None, help='Video capture device ID')
 parser.add_argument('--half', type=str, default='left', choices=['left', 'right'], help='Which half of the frame to process')
 parser.add_argument('--playerid', type=int, default=1, choices=range(1, 7), help='Player ID (1 to 6)')
 args = parser.parse_args()
@@ -38,7 +38,7 @@ current_key_pressed = set()
 # systems OpenCV's default backend fails to initialise a second camera
 # when multiple devices are connected.  CAP_DSHOW is broadly supported
 # on Windows and prevents errors like "can't open camera by index".
-video = cv2.VideoCapture(args.device, cv2.CAP_DSHOW)
+video = cv2.VideoCapture(args.device)
 video.set(3, FRAME_DIM[0])
 video.set(4, FRAME_DIM[1])
 

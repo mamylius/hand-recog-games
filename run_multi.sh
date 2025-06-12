@@ -1,9 +1,9 @@
 #!/bin/bash
 # Start Python scripts in the background
-python main_multi.py --device 0 --half left --playerid 1 & pids+=($!)
-python main_multi.py --device 0 --half right --playerid 2 & pids+=($!)
-python main_multi.py --device 1 --half left --playerid 3 & pids+=($!)
-python main_multi.py --device 1 --half right --playerid 4 & pids+=($!)
+python main_multi.py --device /dev/video0 --half left --playerid 1 & pids+=($!)
+python main_multi.py --device /dev/video1 --half right --playerid 2 & pids+=($!)
+#python main_multi.py --device 1 --half left --playerid 3 & pids+=($!)
+# python main_multi.py --device /dev/video2 --half right --playerid 4 & pids+=($!)
 #python pong_increasing.py & pids+=($!)
 echo "Started all scripts. Press [p] to stop them."
 # Wait for 'p' keypress
