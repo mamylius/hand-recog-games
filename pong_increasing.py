@@ -134,6 +134,7 @@ class Paddle:
 
 class Ball:
     def __init__(self):
+        self.color = (255, 255, 255)
         self.reset()
 
     def reset(self):
@@ -157,26 +158,35 @@ class Ball:
         self.pos += self.vel
 
     def draw(self, surf):
+        """Draw the ball and return the colour used."""
         # color shifts from white towards red as speed increases
         t = (self.speed - BALL_SPEED) / (MAX_BALL_SPEED - BALL_SPEED) if MAX_BALL_SPEED > BALL_SPEED else 0
         t = max(0.0, min(1.0, t))
         red   = 255
         green = int(255 * (1 - t))
         blue  = int(255 * (1 - t))
-        color = (red, green, blue)
-        pygame.draw.circle(surf, color,
+        self.color = (red, green, blue)
+        pygame.draw.circle(surf, self.color,
                            (int(self.pos.x), int(self.pos.y)),
                            BALL_RADIUS)
+        return self.color
 
 # ------------------------- GAME FUNCTIONS --------------------------
 
-def draw_score(surf, scores, pads):
+def draw_score(surf, scores, pads, count=0, color=(255, 255, 255)):
+    """Draw the player scores and the current hit counter."""
     f = pygame.font.SysFont(None, 32)
     x = 20
     for i, s in enumerate(scores):
         t = f.render(f"P{i+1}:{s}", True, pads[i].color)
         surf.blit(t, (x, 10))
         x += t.get_width() + 20
+
+    # counter font size grows gradually with the count
+    size = min(32 + count, 120)
+    cf = pygame.font.SysFont(None, size)
+    ct = cf.render(str(count), True, color)
+    surf.blit(ct, (x + 20, 10))
 
 def resolve_paddle_hit(ball, rel, paddle):
     """Reflect ball, add spin, and push it just inside arena to avoid stutter."""
@@ -262,6 +272,7 @@ def run_game(n):
             ball_speed = BALL_SPEED
         ball = Ball()
         ball.speed = ball_speed
+        hit_count = 0
         waiting = True
 
         # wait for SPACE to serve
@@ -274,7 +285,7 @@ def run_game(n):
             screen.fill((0,0,0))
             msg = font.render(f"Round {rounds+1}/{NUM_ROUNDS} – SPACE", True, (200,200,200))
             screen.blit(msg, (SCREEN_SIZE//2-200, SCREEN_SIZE//2-24))
-            draw_score(screen, scores, pads)
+            draw_score(screen, scores, pads, hit_count, ball.color)
             pygame.display.flip()
             clock.tick(FPS)
 
@@ -301,6 +312,7 @@ def run_game(n):
                         break
                 if hit:
                     resolve_paddle_hit(ball, rel, hit)
+                    hit_count += 1
                 else:
                     # Miss – award points
                     side = 2 * math.pi / n
@@ -318,7 +330,7 @@ def run_game(n):
                                 pygame.quit(); sys.exit()
                         screen.fill((0,0,0))
                         screen.blit(miss, miss.get_rect(center=(SCREEN_SIZE//2, SCREEN_SIZE//2)))
-                        draw_score(screen, scores, pads)
+                        draw_score(screen, scores, pads, hit_count, ball.color)
                         pygame.display.flip()
                         clock.tick(FPS)
                     playing = False
@@ -330,8 +342,8 @@ def run_game(n):
                                ARENA_RADIUS, 1)
             for p in pads:
                 p.draw(screen)
-            ball.draw(screen)
-            draw_score(screen, scores, pads)
+            col = ball.draw(screen)
+            draw_score(screen, scores, pads, hit_count, col)
             pygame.display.flip()
 
     # ---------------- After final round – show podium --------------
