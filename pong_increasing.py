@@ -252,70 +252,6 @@ def show_podium(screen, scores, pads):
         clock.tick(30)
 
 # -------------------------------------------------------------------
-# Training screen before starting the match
-# -------------------------------------------------------------------
-
-def _draw_arrow(surf, color, centre, direction, fast, length):
-    """Helper to draw a left/right arrow or neutral marker."""
-    x, y = centre
-    if direction == 0:
-        pygame.draw.circle(surf, color, (int(x), int(y)), 6)
-        return
-
-    span = length * (1.0 if fast else 0.6)
-    start = (x - direction * span / 2, y)
-    end   = (x + direction * span / 2, y)
-    pygame.draw.line(surf, color, start, end, 4)
-    head_len = 8
-    head_w   = 6
-    tip   = end
-    left  = (tip[0] - direction * head_len, tip[1] - head_w)
-    right = (tip[0] - direction * head_len, tip[1] + head_w)
-    pygame.draw.polygon(surf, color, [tip, left, right])
-
-
-def show_training(n):
-    """Display action arrows for each player before the game starts."""
-    pygame.display.set_caption("Training – press <Space> to start")
-    big_font = pygame.font.SysFont(None, 48)
-    clock = pygame.time.Clock()
-
-    cell_w = SCREEN_SIZE // n
-    length = cell_w // 5
-
-    while True:
-        for e in pygame.event.get():
-            if e.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                return
-
-        screen.fill((0, 0, 0))
-        msg = big_font.render("Training – press <Space> when ready", True,
-                              (200, 200, 200))
-        screen.blit(msg, msg.get_rect(center=(SCREEN_SIZE // 2, 120)))
-
-        for i in range(n):
-            rect = pygame.Rect(i * cell_w, SCREEN_SIZE // 2 - 60, cell_w, 120)
-            pygame.draw.rect(screen, PLAYER_COLORS[i], rect)
-            cx = rect.left + cell_w // 6
-            cy = rect.centery
-            spacing = cell_w // 5
-            arrows = [
-                (1, True),   # right fast
-                (1, False),  # right slow
-                (-1, True),  # left fast
-                (-1, False), # left slow
-                (0, False),  # neutral
-            ]
-            for dirn, fast in arrows:
-                _draw_arrow(screen, (0, 0, 0), (cx, cy), dirn, fast, length)
-                cx += spacing
-
-        pygame.display.flip()
-        clock.tick(30)
-
-# -------------------------------------------------------------------
 # Main game loop per player-count selection
 # -------------------------------------------------------------------
 
@@ -448,5 +384,4 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
     while True:
         players = menu()
-        show_training(players)
         run_game(players)
