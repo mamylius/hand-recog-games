@@ -11,7 +11,7 @@ ARENA_RADIUS         = 700 // 2         # px – distance from centre to wall
 
 BALL_SPEED           = 1.0          # initial speed
 MAX_BALL_SPEED       = BALL_SPEED * 10.0
-BALL_SPEED_INCREMENT = 0.0005        # speed increase per frame
+BALL_SPEED_INCREMENT = 0.0007        # speed increase per frame
 BALL_RADIUS          = 10
 
 PADDLE_ARC_FRACTION = 0.25

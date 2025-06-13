@@ -19,7 +19,7 @@ keyboard = pynput.keyboard.Controller()
 PressKey = keyboard.press
 ReleaseKey = keyboard.release
 
-detector = HandDetector(detectionCon=0.7, maxHands=6)
+detector = HandDetector(detectionCon=0.7, maxHands=1)
 space_key_pressed = space_pressed
 
 ACTIONS = [
