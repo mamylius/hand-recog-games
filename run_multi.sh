@@ -10,7 +10,7 @@ python main_multi.py --device /dev/video10 --half left --playerid 1 & pids+=($!)
 python main_multi.py --device /dev/video11 --half right --playerid 2 & pids+=($!)
 python main_multi.py --device /dev/video20 --half left --playerid 3 & pids+=($!)
 python main_multi.py --device /dev/video21 --half right --playerid 4 & pids+=($!)
-#python pong_increasing.py & pids+=($!)
+python pong_increasing.py & pids+=($!)
 echo "Started all scripts. Press [p] to stop them."
 # Wait for 'p' keypress
 while true; do

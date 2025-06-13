@@ -5,9 +5,9 @@ from typing import List, Tuple
 import pygame
 
 # ----------------------------- CONFIG ------------------------------
-SCREEN_SIZE          = 500
+SCREEN_SIZE          = 1000
 FPS                  = 60
-ARENA_RADIUS         = 350 // 2         # px – distance from centre to wall
+ARENA_RADIUS         = 700 // 2         # px – distance from centre to wall
 
 BALL_SPEED           = 1.0          # initial speed
 MAX_BALL_SPEED       = BALL_SPEED * 10.0
@@ -257,7 +257,7 @@ def run_game(n):
         for p in pads:
             p.reset()
         if rounds > 0:
-            ball_speed = max(ball.speed / 2, BALL_SPEED)
+            ball_speed = max(ball.speed / 3 * 2, BALL_SPEED)
         else:
             ball_speed = BALL_SPEED
         ball = Ball()
