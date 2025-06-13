@@ -252,6 +252,59 @@ def show_podium(screen, scores, pads):
         clock.tick(30)
 
 # -------------------------------------------------------------------
+# Training screen
+# -------------------------------------------------------------------
+
+def show_training(n):
+    """Display player colours and show control arrows until SPACE is pressed."""
+    pads = [Paddle(i, n) for i in range(n)]
+    pygame.display.set_caption("Training – press <Space> when ready")
+    font = pygame.font.SysFont(None, 48)
+    clock = pygame.time.Clock()
+
+    def arrow(surf, color, centre, direction, big=False):
+        """Draw a small or big left/right arrow next to the centre point."""
+        x, y = centre
+        size = 30 if big else 18
+        if direction == "left":
+            pts = [(x - size, y), (x, y - size // 2), (x, y + size // 2)]
+        else:
+            pts = [(x + size, y), (x, y - size // 2), (x, y + size // 2)]
+        pygame.draw.polygon(surf, color, pts)
+
+    running = True
+    while running:
+        for e in pygame.event.get():
+            if e.type == pygame.QUIT:
+                pygame.quit(); sys.exit()
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+                running = False
+
+        keys = pygame.key.get_pressed()
+        screen.fill((0, 0, 0))
+        msg = font.render("Training – press SPACE to start", True, (200,200,200))
+        screen.blit(msg, msg.get_rect(center=(SCREEN_SIZE//2, 100)))
+
+        base_y = SCREEN_SIZE//2 - (n-1)*80//2
+        for i, p in enumerate(pads):
+            y = base_y + i*80
+            x = SCREEN_SIZE//2
+            pygame.draw.circle(screen, p.color, (x, y), 20)
+
+            if keys[p.k_full_up]:
+                arrow(screen, p.color, (x-60, y), "left", True)
+            elif keys[p.k_half_up]:
+                arrow(screen, p.color, (x-60, y), "left", False)
+
+            if keys[p.k_full_dn]:
+                arrow(screen, p.color, (x+60, y), "right", True)
+            elif keys[p.k_half_dn]:
+                arrow(screen, p.color, (x+60, y), "right", False)
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+# -------------------------------------------------------------------
 # Main game loop per player-count selection
 # -------------------------------------------------------------------
 
@@ -384,4 +437,5 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
     while True:
         players = menu()
+        show_training(players)
         run_game(players)
