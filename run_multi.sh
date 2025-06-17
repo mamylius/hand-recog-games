@@ -2,8 +2,20 @@
 # Run the modprobe after reboot
 # sudo modprobe v4l2loopback devices=4 video_nr=10,11,20,21 card_label="cam-vb,cam-vc,cam-vd,cam-ve"
 # Map video devices
-ffmpeg -f v4l2 -i /dev/video0   -map 0:v -f v4l2 /dev/video10   -map 0:v -f v4l2 /dev/video11 & pids+=($!)
-ffmpeg -f v4l2 -i /dev/video2   -map 0:v -f v4l2 /dev/video20   -map 0:v -f v4l2 /dev/video21 & pids+=($!)
+#ffmpeg -f v4l2 -i /dev/video0   -map 0:v -f v4l2 /dev/video10   -map 0:v -f v4l2 /dev/video11 & pids+=($!)
+#ffmpeg -f v4l2 -i /dev/video2   -map 0:v -f v4l2 /dev/video20   -map 0:v -f v4l2 /dev/video21 & pids+=($!)
+
+start_ffmpeg () {
+  ffmpeg -loglevel error \
+         -f v4l2 -i "$1" \
+         -map 0:v -f v4l2 "$2" \
+         -map 0:v -f v4l2 "$3" &
+  pids+=($!)
+  # wait until loopback reports a valid format
+  until v4l2-ctl -d "$2" --all &>/dev/null; do sleep 0.2; done
+}
+start_ffmpeg /dev/video0 /dev/video10 /dev/video11
+start_ffmpeg /dev/video2 /dev/video20 /dev/video21
 
 # Start Python scripts in the background
 python main_multi.py --device /dev/video10 --half left --playerid 1 & pids+=($!)
