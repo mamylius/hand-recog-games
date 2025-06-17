@@ -18,7 +18,7 @@ PADDLE_ARC_FRACTION = 0.25
 PADDLE_SPEED_FACTOR = 0.02
 SPIN_FACTOR         = 0.1
 
-NUM_ROUNDS    = 10          # total rounds before podium
+NUM_ROUNDS    = 4          # total rounds before podium
 # Podium visuals
 PODIUM_WIDTH  = 140         # px – each block width
 PODIUM_GAP    = 60          # px – gap between blocks (centre-to-centre)
@@ -299,14 +299,14 @@ def show_training(n):
             pygame.draw.circle(screen, p.color, (x, y), 20)
 
             if keys[p.k_full_up]:
-                arrow(screen, p.color, (x-60, y), "left", True)
+                arrow(screen, p.color, (x+60, y), "right", True)
             elif keys[p.k_half_up]:
-                arrow(screen, p.color, (x-60, y), "left", False)
+                arrow(screen, p.color, (x+60, y), "right", False)
 
             if keys[p.k_full_dn]:
-                arrow(screen, p.color, (x+60, y), "right", True)
+                arrow(screen, p.color, (x-60, y), "left", True)
             elif keys[p.k_half_dn]:
-                arrow(screen, p.color, (x+60, y), "right", False)
+                arrow(screen, p.color, (x-60, y), "left", False)
 
         pygame.display.flip()
         clock.tick(FPS)
