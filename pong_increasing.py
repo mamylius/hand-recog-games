@@ -245,7 +245,7 @@ def show_podium(screen, scores, pads):
             rank_txt = big_font.render(str(pos+1), True, (0,0,0))
             screen.blit(rank_txt, rank_txt.get_rect(center=(centres[pos], y+h-40)))
 
-        tip = small_font.render("<Enter> – menu  |  <Esc> – quit", True, (200,200,200))
+        tip = small_font.render("<Enter> – menu  |  <Esc> – menu", True, (200,200,200))
         screen.blit(tip, tip.get_rect(center=(cx, SCREEN_SIZE-120)))
 
         pygame.display.flip()
@@ -277,8 +277,11 @@ def show_training(n):
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 pygame.quit(); sys.exit()
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                running = False
+            if e.type == pygame.KEYDOWN:
+                if e.key == pygame.K_SPACE:
+                    running = False
+                if e.key == pygame.K_ESCAPE:
+                    return False
 
         keys = pygame.key.get_pressed()
         screen.fill((0, 0, 0))
@@ -303,6 +306,8 @@ def show_training(n):
 
         pygame.display.flip()
         clock.tick(FPS)
+
+    return True
 
 # -------------------------------------------------------------------
 # Main game loop per player-count selection
@@ -333,8 +338,11 @@ def run_game(n):
             for e in pygame.event.get():
                 if e.type == pygame.QUIT:
                     pygame.quit(); sys.exit()
-                if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                    waiting = False
+                if e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_SPACE:
+                        waiting = False
+                    if e.key == pygame.K_ESCAPE:
+                        return False
             screen.fill((0,0,0))
             msg = font.render(f"Round {rounds+1}/{NUM_ROUNDS} – SPACE", True, (200,200,200))
             screen.blit(msg, (SCREEN_SIZE//2-200, SCREEN_SIZE//2-24))
@@ -349,6 +357,8 @@ def run_game(n):
             for e in pygame.event.get():
                 if e.type == pygame.QUIT:
                     pygame.quit(); sys.exit()
+                if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+                    return False
             pr = pygame.key.get_pressed()
             for p in pads:
                 p.update(pr)
@@ -381,6 +391,8 @@ def run_game(n):
                         for e in pygame.event.get():
                             if e.type == pygame.QUIT:
                                 pygame.quit(); sys.exit()
+                            if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+                                return False
                         screen.fill((0,0,0))
                         screen.blit(miss, miss.get_rect(center=(SCREEN_SIZE//2, SCREEN_SIZE//2)))
                         draw_score(screen, scores, pads, hit_count, ball.color)
@@ -401,6 +413,8 @@ def run_game(n):
 
     # ---------------- After final round – show podium --------------
     show_podium(screen, scores, pads)
+
+    return True
 
 # ------------------------------ MENU -------------------------------
 
@@ -437,5 +451,7 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
     while True:
         players = menu()
-        show_training(players)
-        run_game(players)
+        if not show_training(players):
+            continue
+        if not run_game(players):
+            continue
