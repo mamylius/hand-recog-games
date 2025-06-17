@@ -212,6 +212,10 @@ def show_podium(screen, scores, pads):
     """Display the final ranking on a three-step podium."""
     pygame.display.set_caption("Results – press <Space> to continue")
     ranking = sorted(range(len(scores)), key=lambda i: (-scores[i], i))
+    # Map each unique score to a podium step so tied scores share the same height
+    unique_scores = sorted({scores[i] for i in ranking}, reverse=True)
+    score_height = {s: (PODIUM_HEIGHT[i] if i < len(PODIUM_HEIGHT) else PODIUM_HEIGHT[-1])
+                    for i, s in enumerate(unique_scores)}
     topN = min(3, len(ranking))
     big_font = pygame.font.SysFont(None, 64)
     small_font = pygame.font.SysFont(None, 36)
@@ -233,7 +237,7 @@ def show_podium(screen, scores, pads):
 
         for pos in range(topN):
             p_idx = ranking[pos]
-            h     = PODIUM_HEIGHT[pos]
+            h     = score_height[scores[p_idx]]
             x     = centres[pos] - PODIUM_WIDTH//2
             y     = SCREEN_SIZE//2 + 200 - h
             pygame.draw.rect(screen, pads[p_idx].color, (x,y,PODIUM_WIDTH,h))
