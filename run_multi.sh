@@ -1,21 +1,9 @@
-#!/usr/bin/env bash
-set -euo pipefail
-pids=()
-
-# Load loopback with safe defaults
-#sudo modprobe v4l2loopback devices=4 video_nr=10,11,20,21 card_label="cam-vb,cam-vc,cam-vd,cam-ve" flags=8 max_buffers=4
-
-start_ffmpeg () {
-  src="$1"; dst1="$2"; dst2="$3"
-  ffmpeg -loglevel error -f v4l2 -input_format mjpeg -i "$src" \
-         -map 0:v -f v4l2 "$dst1" \
-         -map 0:v -f v4l2 "$dst2" &
-  pids+=($!)
-  until v4l2-ctl -d "$dst1" --all &>/dev/null; do sleep 0.2; done
-}
-
-start_ffmpeg /dev/video0 /dev/video10 /dev/video11
-start_ffmpeg /dev/video2  /dev/video20 /dev/video21
+#!/bin/bash
+# Run the modprobe after reboot
+# sudo modprobe v4l2loopback devices=4 video_nr=10,11,20,21 card_label="cam-vb,cam-vc,cam-vd,cam-ve"
+# Map video devices
+ffmpeg -f v4l2 -i /dev/video0   -map 0:v -f v4l2 /dev/video10   -map 0:v -f v4l2 /dev/video11 & pids+=($!)
+ffmpeg -f v4l2 -i /dev/video2   -map 0:v -f v4l2 /dev/video20   -map 0:v -f v4l2 /dev/video21 & pids+=($!)
 
 python main_multi.py --device /dev/video10 --half left  --playerid 1 & pids+=($!)
 python main_multi.py --device /dev/video11 --half right --playerid 2 & pids+=($!)
