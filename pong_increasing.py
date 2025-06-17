@@ -416,9 +416,9 @@ def menu():
                 pygame.quit(); sys.exit()
             if e.type == pygame.KEYDOWN:
                 if e.key in (pygame.K_LEFT, pygame.K_a, pygame.K_DOWN):
-                    sel = 6 if sel == 2 else sel - 1
+                    sel = 4 if sel == 2 else sel - 1
                 if e.key in (pygame.K_RIGHT, pygame.K_d, pygame.K_UP):
-                    sel = 2 if sel == 6 else sel + 1
+                    sel = 2 if sel == 4 else sel + 1
                 if e.key == pygame.K_SPACE:
                     return sel
 
