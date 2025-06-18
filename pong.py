@@ -4,6 +4,12 @@
 import math, random, sys
 from typing import List, Tuple
 import pygame
+import os
+
+# sound placeholders (initialised in main)
+BOWLING_SOUND = None
+TAC_SOUND = None
+CHEER_SOUND = None
 
 # ----------------------------- CONFIG ------------------------------
 SCREEN_SIZE = 1000
@@ -159,7 +165,10 @@ def resolve_paddle_hit(ball,rel,paddle):
 def show_podium(screen,scores,pads):
     """Display the final ranking on a three‑step podium. Returns when the
     user presses <Space> or closes the window."""
+    global CHEER_SOUND
     pygame.display.set_caption("Results – press <Space> to continue")
+    if CHEER_SOUND:
+        CHEER_SOUND.play()
     ranking=sorted(range(len(scores)),key=lambda i:(-scores[i],i))  # by score then player index
     # Map each unique score to a podium step so tied scores share the same height
     unique_scores=sorted({scores[i] for i in ranking}, reverse=True)
@@ -213,9 +222,11 @@ def show_podium(screen,scores,pads):
 # -------------------------------------------------------------------
 
 def run_game(n):
+    global BOWLING_SOUND, TAC_SOUND
     pads=[Paddle(i,n) for i in range(n)]
     scores=[0]*n; clock=pygame.time.Clock(); font=pygame.font.SysFont(None,48)
     rounds=0
+    hit_total=0
     while rounds<NUM_ROUNDS:
         # ----------------- Round initialisation --------------------
         for p in pads:p.reset()
@@ -245,6 +256,11 @@ def run_game(n):
                     if angle_between(ang,p.start-COLLISION_MARGIN,p.end+COLLISION_MARGIN): hit=p; break
                 if hit:
                     resolve_paddle_hit(ball,rel,hit)
+                    hit_total += 1
+                    if hit_total % 5 == 0 and TAC_SOUND:
+                        TAC_SOUND.play()
+                    elif BOWLING_SOUND:
+                        BOWLING_SOUND.play()
                 else:
                     # ---------------- Miss – award points ----------
                     side=2*math.pi/n; loser=int(((ang-1e-6)//side)%n)
@@ -285,7 +301,13 @@ def menu():
 
 # ------------------------------ MAIN -------------------------------
 if __name__=="__main__":
-    pygame.init(); screen=pygame.display.set_mode((SCREEN_SIZE,SCREEN_SIZE))
+    pygame.init()
+    pygame.mixer.init()
+    SOUNDS_PATH = os.path.join(os.path.dirname(__file__), "sounds")
+    BOWLING_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "cleaned_bowling_sound.mp3"))
+    TAC_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "cleaned_tac_sound.mp3"))
+    CHEER_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "crowd-cheering-rhythmic-cheering-137248.mp3"))
+    screen=pygame.display.set_mode((SCREEN_SIZE,SCREEN_SIZE))
     while True:
         players=menu()
         run_game(players)
