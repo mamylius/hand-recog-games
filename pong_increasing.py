@@ -472,7 +472,7 @@ if __name__ == "__main__":
     SOUNDS_PATH = os.path.join(os.path.dirname(__file__), "sounds")
     BOWLING_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "cleaned_bowling_sound.mp3"))
     TAC_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "cleaned_tac_sound.mp3"))
-    CHEER_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "crowd-cheering-rhythmic-cheering-137248.mp3"))
+    CHEER_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "shortened_chanting.mp3"))
     screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
     while True:
         players = menu()
