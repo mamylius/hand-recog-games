@@ -7,7 +7,6 @@ import os
 
 # sound placeholders (initialised in main)
 BOWLING_SOUND = None
-TAC_SOUND = None
 CHEER_SOUND = None
 
 # ----------------------------- CONFIG ------------------------------
@@ -327,7 +326,7 @@ def show_training(n):
 # -------------------------------------------------------------------
 
 def run_game(n):
-    global BOWLING_SOUND, TAC_SOUND
+    global BOWLING_SOUND
     pads   = [Paddle(i, n) for i in range(n)]
     scores = [0] * n
     clock  = pygame.time.Clock()
@@ -392,9 +391,7 @@ def run_game(n):
                     resolve_paddle_hit(ball, rel, hit)
                     hit_count += 1
                     hit_total += 1
-                    if hit_total % 5 == 0 and TAC_SOUND:
-                        TAC_SOUND.play()
-                    elif BOWLING_SOUND:
+                    if BOWLING_SOUND:
                         BOWLING_SOUND.play()
                 else:
                     # Miss – award points
@@ -471,7 +468,6 @@ if __name__ == "__main__":
     pygame.mixer.init()
     SOUNDS_PATH = os.path.join(os.path.dirname(__file__), "sounds")
     BOWLING_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "cleaned_bowling_sound.mp3"))
-    TAC_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "cleaned_tac_sound.mp3"))
     CHEER_SOUND = pygame.mixer.Sound(os.path.join(SOUNDS_PATH, "shortened_chanting.mp3"))
     screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
     while True:
